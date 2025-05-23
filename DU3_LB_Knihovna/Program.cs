@@ -38,85 +38,87 @@ class Program
       zimniKrajina
     };
     System.Console.WriteLine("Vítejte v aplikaci pro správu knihovny. ");
-    string input;
-    string[] inputParts;
+    //string input;
+    //string[] inputParts;
 
-
-        Instructions();
-        input = Console.ReadLine();
-        inputParts = input.Split(';');
-
-    //Program bude opakovaně číst vstup z konzole. Vstup může být jeden z následujících:
-
-    //ADD;[název];[autor];[datum vydání ve formátu YYYY-MM-DD];[počet stran]
-    if (inputParts[0].ToUpper() == "ADD")
+    while (true)
     {
-      string title = inputParts[1];
-      string author = inputParts[2];
-      DateTime publishedDate = DateTime.Parse(inputParts[3]);
-      int pages = int.Parse(inputParts[4]);
+      Instructions();
+      string input = Console.ReadLine();
+      string[] inputParts = input.Split(';');
 
-      Book newBook = new Book(title, author, publishedDate, pages);
-      books.Add(newBook);
-      System.Console.WriteLine($"Kniha '{title}' byla přidána do knihovny.");
-    }
-    //LIST - Vypíše všechny knihy, seřazené podle data vydání. Použijte OrderBy
-    else if (inputParts[0].ToUpper() == "LIST")
-    {
-      var sortedBooks = books.OrderBy(b => b.PublishedDate);
-      foreach (var book in sortedBooks)
+      //Program bude opakovaně číst vstup z konzole. Vstup může být jeden z následujících:
+
+      //ADD;[název];[autor];[datum vydání ve formátu YYYY-MM-DD];[počet stran]
+      if (inputParts[0].ToUpper() == "ADD")
       {
-        System.Console.WriteLine($"Kniha: {book.Title}, autor: {book.Author}, vydáno {book.PublishedDate.ToString("d.M.yyyy")}, Počet stran: {book.Pages}");
+        string title = inputParts[1];
+        string author = inputParts[2];
+        DateTime publishedDate = DateTime.Parse(inputParts[3]);
+        int pages = int.Parse(inputParts[4]);
+
+        Book newBook = new Book(title, author, publishedDate, pages);
+        books.Add(newBook);
+        System.Console.WriteLine($"Kniha '{title}' byla přidána do knihovny.");
       }
-    }
-    //STATS - Vypíše:
-    else if (inputParts[0].ToUpper() == "STATS")
-    {
-      //Průměrný počet stran (použijte Select a Average)
-      int averagePages = (int)books.Select(b => b.Pages).Average();
-      //Počet knih od každého autora (použijte GroupBy)
-      var booksByAuthor = books.GroupBy(b => b.Author)
-                                .Select(g => new { Author = g.Key, Count = g.Count() });
-      //Počet unikatních slov v názvech knih. Použijte SelectMany a rozdělení názvů podle mezer (interpunkci vynechte) pro vytvoření jednoho seznamu všech slov, pak použijte Distinct.
-      var allWords = books.SelectMany(b => b.Title.Split(' '));
-      var allWordsSmall = allWords.Select(w => w.ToLower());
-      var uniqueWordsCount = allWordsSmall.Distinct().Count();
-      System.Console.WriteLine($"Průměrný počet stran: {averagePages}");
-      System.Console.WriteLine($"Počet knih od každého autora:");
-      foreach (var author in booksByAuthor)
+      //LIST - Vypíše všechny knihy, seřazené podle data vydání. Použijte OrderBy
+      else if (inputParts[0].ToUpper() == "LIST")
       {
-        System.Console.WriteLine($"{author.Author}: {author.Count}");
-      }
-      System.Console.WriteLine($"Počet unikátních slov v názvech knih: {uniqueWordsCount}");
-
-    }
-    //FIND;[klíčové slovo] - Vyhledá knihy, jejichž název obsahuje dané slovo, bez ohledu na velikost písmen (použijte Where).
-    else if (inputParts[0].ToUpper() == "FIND")
-    {
-      string keyword = inputParts[1].ToLower();
-      var foundBooks = books.Where(b => b.Title.ToLower().Contains(keyword));
-      if (foundBooks.Any())
-      {
-        System.Console.WriteLine($"Výsledky hledání pro '{keyword}':");
-        foreach (var book in foundBooks)
+        var sortedBooks = books.OrderBy(b => b.PublishedDate);
+        foreach (var book in sortedBooks)
         {
-          System.Console.WriteLine(book.Title);
+          System.Console.WriteLine($"Kniha: {book.Title}, autor: {book.Author}, vydáno {book.PublishedDate.ToString("d.M.yyyy")}, Počet stran: {book.Pages}");
         }
+      }
+      //STATS - Vypíše:
+      else if (inputParts[0].ToUpper() == "STATS")
+      {
+        //Průměrný počet stran (použijte Select a Average)
+        int averagePages = (int)books.Select(b => b.Pages).Average();
+        //Počet knih od každého autora (použijte GroupBy)
+        var booksByAuthor = books.GroupBy(b => b.Author)
+                                  .Select(g => new { Author = g.Key, Count = g.Count() });
+        //Počet unikatních slov v názvech knih. Použijte SelectMany a rozdělení názvů podle mezer (interpunkci vynechte) pro vytvoření jednoho seznamu všech slov, pak použijte Distinct.
+        var allWords = books.SelectMany(b => b.Title.Split(' '));
+        var allWordsSmall = allWords.Select(w => w.ToLower());
+        var uniqueWordsCount = allWordsSmall.Distinct().Count();
+        System.Console.WriteLine($"Průměrný počet stran: {averagePages}");
+        System.Console.WriteLine($"Počet knih od každého autora:");
+        foreach (var author in booksByAuthor)
+        {
+          System.Console.WriteLine($"{author.Author}: {author.Count}");
+        }
+        System.Console.WriteLine($"Počet unikátních slov v názvech knih: {uniqueWordsCount}");
+
+      }
+      //FIND;[klíčové slovo] - Vyhledá knihy, jejichž název obsahuje dané slovo, bez ohledu na velikost písmen (použijte Where).
+      else if (inputParts[0].ToUpper() == "FIND")
+      {
+        string keyword = inputParts[1].ToLower();
+        var foundBooks = books.Where(b => b.Title.ToLower().Contains(keyword));
+        if (foundBooks.Any())
+        {
+          System.Console.WriteLine($"Výsledky hledání pro '{keyword}':");
+          foreach (var book in foundBooks)
+          {
+            System.Console.WriteLine(book.Title);
+          }
+        }
+        else
+        {
+          System.Console.WriteLine($"Žádné knihy neobsahují klíčové slovo '{keyword}'.");
+        }
+      }
+      //END - Ukončí program.
+      else if (inputParts[0].ToUpper() == "END")
+      {
+        System.Console.WriteLine("Program byl ukončen.");
+        return;
       }
       else
       {
-        System.Console.WriteLine($"Žádné knihy neobsahují klíčové slovo '{keyword}'.");
+        System.Console.WriteLine("Neplatný příkaz. Zkuste to znovu.");
       }
-    }
-    //END - Ukončí program.
-    else if (inputParts[0].ToUpper() == "END")
-    {
-      System.Console.WriteLine("Program byl ukončen.");
-      return;
-    }
-    else
-    {
-      System.Console.WriteLine("Neplatný příkaz. Zkuste to znovu.");
     }
   }
 
