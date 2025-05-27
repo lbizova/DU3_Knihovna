@@ -2,6 +2,7 @@
 
 class Program
 {
+ // static List<Book> books = new List<Book>();
   static void Main(string[] args)
   {
     //  Console.WriteLine("Hello, World!");
@@ -43,7 +44,7 @@ class Program
 
     while (true)
     {
-      System.Console.WriteLine(); 
+      System.Console.WriteLine();
       Instructions();
       string input = Console.ReadLine();
       if (string.IsNullOrWhiteSpace(input))
@@ -85,7 +86,7 @@ class Program
       }
       catch (Exception ex)
       {
-        
+
         System.Console.WriteLine($"Došlo k chybě: {ex.Message}");
         continue;
       }
@@ -96,23 +97,15 @@ class Program
       if (inputParts[0].ToUpper() == "ADD")
       {
         string title = inputParts[1].Trim();
-        if (string.IsNullOrWhiteSpace(title))
-        {
-          System.Console.WriteLine("Název knihy nesmí být prázdný.");
-          continue;
-        }
+
         string author = inputParts[2].Trim();
-        if (string.IsNullOrWhiteSpace(author))
-        {
-          System.Console.WriteLine("Autor knihy nesmí být prázdný.");
-          continue;
-        }
+
         if (!DateTime.TryParse(inputParts[3], out DateTime publishedDate))
         {
           System.Console.WriteLine("Neplatný formát data. Použijte formát YYYY-MM-DD.");
           continue;
         }
-        if (!int.TryParse(inputParts[4], out int pages) || pages <= 0)
+        if (!int.TryParse(inputParts[4], out int pages))
         {
           System.Console.WriteLine("Neplatný počet stran. Zadejte kladné celé číslo.");
           continue;
