@@ -89,7 +89,7 @@ class Program
     }
     string title = inputParts[1].Trim();
     string author = inputParts[2].Trim();
-    if (!DateTime.TryParse(inputParts[3], out DateTime publishedDate))
+    if (!DateTime.TryParseExact(inputParts[3], "yyyy-MM-dd", null, System.Globalization.DateTimeStyles.None , out DateTime publishedDate))
     {
       Console.WriteLine("Neplatný formát data. Použijte formát YYYY-MM-DD.");
       return;
