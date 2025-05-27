@@ -20,9 +20,9 @@ namespace DU3_LB_Knihovna
       private set // Pouze pro čtení zvenčí, ale lze nastavit uvnitř třídy
       {
         if (string.IsNullOrWhiteSpace(value))
-          {
-            throw new ArgumentException("Název knihy nesmí být prázdný.");
-          }
+        {
+          throw new ArgumentException("Název knihy nesmí být prázdný.");
+        }
         title = value;
       }
     }
