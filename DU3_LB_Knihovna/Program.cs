@@ -43,23 +43,96 @@ class Program
 
     while (true)
     {
+      System.Console.WriteLine(); 
       Instructions();
       string input = Console.ReadLine();
+      if (string.IsNullOrWhiteSpace(input))
+      {
+        System.Console.WriteLine("Neplatný příkaz. Zkuste to znovu.");
+        continue;
+      }
+
       string[] inputParts = input.Split(';');
+      //kontrola správného počtu argumentů
+      string command = inputParts[0].ToUpper();
+      try
+      {
+        if (command == "ADD" && inputParts.Length != 5)
+        {
+          System.Console.WriteLine("Neplatný počet parametrů pro přidání knihy.");
+          continue;
+        }
+        else if (command == "LIST" && inputParts.Length != 1)
+        {
+          System.Console.WriteLine("Neplatný příkaz. Zkuste to znovu.");
+          continue;
+        }
+        else if (command == "STATS" && inputParts.Length != 1)
+        {
+          System.Console.WriteLine("Neplatný příkaz. Zkuste to znovu.");
+          continue;
+        }
+        else if (command == "FIND" && inputParts.Length != 2)
+        {
+          System.Console.WriteLine("Zadej klíčové slovo pro hledání.");
+          continue;
+        }
+        else if (command == "END" && inputParts.Length != 1)
+        {
+          System.Console.WriteLine("Neplatný příkaz. Zkuste to znovu.");
+          continue;
+        }
+      }
+      catch (Exception ex)
+      {
+        
+        System.Console.WriteLine($"Došlo k chybě: {ex.Message}");
+        continue;
+      }
 
       //Program bude opakovaně číst vstup z konzole. Vstup může být jeden z následujících:
 
       //ADD;[název];[autor];[datum vydání ve formátu YYYY-MM-DD];[počet stran]
       if (inputParts[0].ToUpper() == "ADD")
       {
-        string title = inputParts[1];
-        string author = inputParts[2];
-        DateTime publishedDate = DateTime.Parse(inputParts[3]);
-        int pages = int.Parse(inputParts[4]);
-
-        Book newBook = new Book(title, author, publishedDate, pages);
-        books.Add(newBook);
-        System.Console.WriteLine($"Kniha '{title}' byla přidána do knihovny.");
+        string title = inputParts[1].Trim();
+        if (string.IsNullOrWhiteSpace(title))
+        {
+          System.Console.WriteLine("Název knihy nesmí být prázdný.");
+          continue;
+        }
+        string author = inputParts[2].Trim();
+        if (string.IsNullOrWhiteSpace(author))
+        {
+          System.Console.WriteLine("Autor knihy nesmí být prázdný.");
+          continue;
+        }
+        if (!DateTime.TryParse(inputParts[3], out DateTime publishedDate))
+        {
+          System.Console.WriteLine("Neplatný formát data. Použijte formát YYYY-MM-DD.");
+          continue;
+        }
+        if (!int.TryParse(inputParts[4], out int pages) || pages <= 0)
+        {
+          System.Console.WriteLine("Neplatný počet stran. Zadejte kladné celé číslo.");
+          continue;
+        }
+        //Zkontrolujte, zda již kniha s daným názvem a autorem neexistuje.
+        if (books.Any(b => b.Title.Equals(title, StringComparison.OrdinalIgnoreCase) && b.Author.Equals(author, StringComparison.OrdinalIgnoreCase)))
+        {
+          System.Console.WriteLine($"Kniha '{title}' od autora '{author}' již existuje.");
+          continue;
+        }
+        try
+        {
+          Book newBook = new Book(title, author, publishedDate, pages);
+          books.Add(newBook);
+          System.Console.WriteLine($"Kniha '{title}' byla přidána do knihovny.");
+        }
+        catch (ArgumentException ex)
+        {
+          System.Console.WriteLine($"Chyba při přidávání knihy: {ex.Message}");
+        }
       }
       //LIST - Vypíše všechny knihy, seřazené podle data vydání. Použijte OrderBy
       else if (inputParts[0].ToUpper() == "LIST")
